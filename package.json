@@ -6,12 +6,15 @@
   "author": "lufuhu <gitea@lufuhu.com>",
   "private": true,
   "scripts": {
-    "test": "echo \"No test specified\" && exit 0"
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "dev:electron": "quasar dev -m electron",
+    "build:electron": "quasar build -m electron"
   },
   "dependencies": {
+    "@quasar/extras": "^1.0.0",
     "axios": "^0.21.1",
     "pinia": "^2.0.11",
-    "@quasar/extras": "^1.0.0",
     "quasar": "^2.6.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0"
@@ -19,6 +22,7 @@
   "devDependencies": {
     "@quasar/app-vite": "^1.0.0",
     "autoprefixer": "^10.4.2",
+    "electron": "^21.3.0",
     "postcss": "^8.4.14"
   },
   "engines": {

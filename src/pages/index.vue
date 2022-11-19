@@ -1,12 +1,14 @@
 <template>
 <div>
   <q-icon name="mat6k_plus" />
-<!--  <q-icon v-for="item in lists" :name="item" />-->
+  <q-icon v-for="item in lists" :name="item" />
 </div>
 </template>
 
 <script>
-import icons from '@quasar/extras/material-icons/icons.json'
+import icons from '@quasar/extras/material-icons/icons.json';
+import _  from 'lodash/string';
+
 export default {
   name: "index",
   data(){
@@ -15,8 +17,11 @@ export default {
     }
   },
   mounted() {
-    console.log(icons)
-    this.lists = icons
+    let lists = [];
+    for(let i=0;i<icons.length;i++){
+      lists.push(_.snakeCase(icons[i]))
+    }
+    this.lists = lists
   }
 }
 </script>

@@ -27,3 +27,8 @@
  *   }
  * }
  */
+const { contextBridge, ipcRenderer } = require('electron')
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  showWinDialog: (data) => ipcRenderer.send('showWinDialog', data),
+})

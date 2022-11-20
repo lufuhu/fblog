@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme } from 'electron'
+import {app, BrowserWindow, ipcMain, nativeTheme} from 'electron'
 import path from 'path'
 import os from 'os'
 
@@ -9,11 +9,12 @@ try {
   if (platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
     require('fs').unlinkSync(path.join(app.getPath('userData'), 'DevTools Extensions'))
   }
-} catch (_) { }
+} catch (_) {
+}
 
 let mainWindow
 
-function createWindow () {
+function createWindow() {
   /**
    * Initial window options
    */
@@ -47,7 +48,10 @@ function createWindow () {
   })
 }
 
-app.whenReady().then(createWindow)
+app.whenReady().then(()=>{
+  ipcMain.on('showWinDialog', showWinDialog)
+  createWindow()
+})
 
 app.on('window-all-closed', () => {
   if (platform !== 'darwin') {
@@ -60,3 +64,25 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+// windows dialog
+function showWinDialog(event, options) {
+  const childWindow = new BrowserWindow({
+    parent: mainWindow,
+    width: 500,
+    height: 400,
+    frame: false,
+    useContentSize: true,
+  })
+  childWindow.loadURL(process.env.APP_URL + "/#" + options.url)
+}
+function closeWinDialog(event, options) {
+  const childWindow = new BrowserWindow({
+    parent: mainWindow,
+    width: 500,
+    height: 400,
+    frame: false,
+    useContentSize: true,
+  })
+  childWindow.loadURL(process.env.APP_URL + "/#" + options.url)
+}

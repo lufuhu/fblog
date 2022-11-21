@@ -13,6 +13,7 @@ try {
 }
 
 let mainWindow
+let childWindow
 
 function createWindow() {
   /**
@@ -20,7 +21,7 @@ function createWindow() {
    */
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
-    width: 1300,
+    width: process.env.DEBUGGING ? 1300 : 800,
     height: 600,
     frame: false,
     useContentSize: true,
@@ -48,10 +49,35 @@ function createWindow() {
   })
 }
 
-app.whenReady().then(()=>{
-  ipcMain.on('showWinDialog', showWinDialog)
+app.whenReady().then(() => {
+  ipcMain.on('ipcSend', ipcSend);
   createWindow()
 })
+
+function ipcSend(event, data) {
+  switch (data.event) {
+    case "min":
+      mainWindow.minimize()
+      break
+    case "max":
+      if (mainWindow.isMaximized()) {
+        mainWindow.unmaximize()
+      } else {
+        mainWindow.maximize()
+      }
+      break
+    case "close":
+      mainWindow.close()
+      break
+    case "show_win":
+      showWinDialog(event, data)
+      break
+    case "child_close":
+      console.log(childWindow)
+      childWindow.close();
+      break
+  }
+}
 
 app.on('window-all-closed', () => {
   if (platform !== 'darwin') {
@@ -67,22 +93,14 @@ app.on('activate', () => {
 
 // windows dialog
 function showWinDialog(event, options) {
-  const childWindow = new BrowserWindow({
+   childWindow = new BrowserWindow({
     parent: mainWindow,
     width: 500,
     height: 400,
     frame: false,
+    modal: true,
     useContentSize: true,
   })
   childWindow.loadURL(process.env.APP_URL + "/#" + options.url)
 }
-function closeWinDialog(event, options) {
-  const childWindow = new BrowserWindow({
-    parent: mainWindow,
-    width: 500,
-    height: 400,
-    frame: false,
-    useContentSize: true,
-  })
-  childWindow.loadURL(process.env.APP_URL + "/#" + options.url)
-}
+
